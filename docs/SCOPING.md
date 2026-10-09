@@ -81,4 +81,4 @@ If that information is not present in the approved local documents, the assistan
 
 ## Peer review and revision
 
-Peer review is pending. My assigned collaborator, Mike, was unexpectedly unavailable during the working session. I completed the technical work independently and sent him the scoping draft for asynchronous review. I will update this section with his actual feedback and any resulting revision once it is received.
+Peer review is pending. Mike and I completed some testing together during class, but he was unexpectedly unavailable for the later completion session. I completed the remaining technical work and final verification independently and sent him the scoping draft for asynchronous review. I will update this section with his actual feedback and any resulting revision once it is received.
