@@ -1,5 +1,7 @@
 # `rag-starter` — the HMSTI 509 personal-assistant spine
 
+**Week 1 collaborator:** Mike
+
 This is the **one repository you grow all term**. In Week 1 it already runs a working assistant shell.
 Every week after, you replace a piece of "borrowed magic" with code you understand, until by
 **Demo Day (Week 9)** it is a Retrieval-Augmented Generation (RAG) personal assistant that answers
