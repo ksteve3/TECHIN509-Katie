@@ -65,6 +65,59 @@ is in [`SETUP_TROUBLESHOOTING.md`](SETUP_TROUBLESHOOTING.md).
 
 ---
 
+## Assignment 1 — Offline Document Assistant
+
+Our assistant is intended to help **Katie and Mike** find, understand, and summarize
+information from a limited collection of approved local documents, with concise answers
+and verifiable source filenames. The existing [project scope](docs/SCOPING.md) defines
+the source permissions, boundaries, and longer-term retrieval goals.
+
+Assignment 1 establishes the assistant profile and terminal conversation loop. The
+profile prioritizes approved sources, acknowledges missing information, and prohibits
+invented facts, citations, or claims of searches that did not happen. The terminal loop
+does not search documents; the profile alone does not implement retrieval or prove
+that a real offline model works.
+
+Launch the deterministic demo from a VS Code **PowerShell** terminal using the existing
+virtual environment (see Quick start above for dependency setup):
+
+```powershell
+Set-Location 'C:\Users\krste\projects\TECHIN509-Katie'
+$env:OPENAI_API_KEY = ' '
+$env:RIBOT_LLM = 'fake'
+.\.venv\Scripts\python.exe -m ribot.chatbot
+```
+
+These settings select FakeLLM without API calls or charges for this terminal session.
+FakeLLM is a scripted testing backend with predictable replies and a name-memory demo;
+it is not a real offline language model and does not establish retrieval quality.
+A real local model requires separate setup and validation, such as the optional Ollama
+configuration described below.
+
+- Type a message and press Enter to receive a reply.
+- `/show` displays the system prompt and conversation history.
+- `/exit` ends the session cleanly.
+- Empty or whitespace-only input is ignored.
+- Unknown slash commands display help and continue without calling the model.
+
+Conversation history starts with the system prompt. Each valid chat message and its
+assistant reply are appended, and prior turns are sent to the model with the next
+message for context. History stays in memory for the current session; restarting the
+terminal assistant begins a new history. Commands and blank input do not add turns.
+Try `My name is Katie.`, then `What's my name?`, then `/show` to see this behavior.
+
+Run the focused Assignment 1 tests from the project directory:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_chatbot.py -q
+git diff --check
+```
+
+The test module explicitly selects FakeLLM and disables API-key use. It covers the
+profile, input loop, history updates and context, `/show`, `/exit`, blank input, and
+unknown commands. Passing these tests verifies the conversation mechanics and profile
+configuration, not a real model's adherence to the profile.
+
 ## How the files map to the weeks
 
 | Week | You learn | File you build / use | Fallback if stuck |
