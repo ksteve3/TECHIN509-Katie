@@ -3,6 +3,18 @@
 ## Goal
 I extended my existing TECHIN 509 chatbot so it can validate messages, save a conversation, and read it back. I reused the existing `ConversationLogger`, `ChatBot`, and `export_to_json` rather than creating a separate chat application.
 
+## Requirement 1 — Identifying repeated and tightly coupled logic
+
+I examined how `ChatBot` records messages, how `ConversationLogger` keeps the full session log, and how saved conversations are represented. Before this refactor, both `ChatBot.add_turn()` and `ConversationLogger.log()` constructed the same `{"role": role, "content": content}` dictionary independently. That repetition created a risk of inconsistent message shapes and allowed invalid roles or non-text content to enter memory. I extracted `validate_turn()` as a shared contract so both paths accept the same format.
+
+I also identified a coupling between conversation memory and persistence: the active chatbot history includes the system prompt, while the saved conversation should contain only user and assistant turns. Saving and loading should not silently replace the assistant's instructions or partially overwrite an existing conversation. The chatbot now delegates file writing to the existing logger/JSON export helper and reading/validation to `load_conversation()`; `resume()` replaces session turns only after all saved records pass validation.
+
+The contracts below make each boundary explicit. Importantly, text is preserved exactly: cleaning or lowercasing a conversation turn would change the memory supplied to the language model.
+
+### How this supports my longer-term project
+
+I eventually want this chatbot to run fully offline while searching approved local knowledge sources such as technical documents, Kiwix/ZIM archives, downloaded video transcripts, and archived websites. Those are **future features, not features implemented by this assignment**. Keeping transcript extraction, document chunking, retrieval, and model inference separate from message validation and conversation storage will make it easier to add those components without changing the format of a saved conversation. For this prototype I deliberately limited the code changes to the six assignment requirements.
+
 ## Component contracts
 | Function or method | Input | Output / responsibility |
 | --- | --- | --- |
