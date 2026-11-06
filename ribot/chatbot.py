@@ -7,6 +7,8 @@
 
 from __future__ import annotations
 
+import json
+
 from .llm import chat
 from .textprep import export_to_json
 
@@ -32,6 +34,36 @@ working unless the running application actually provides and verifies them.
 """
 
 
+ALLOWED_ROLES = ("user", "assistant")
+
+def validate_turn(role: str, content: str) -> dict[str, str]:
+    """Return a validated turn; keep original text unchanged for memory fidelity."""
+    if role not in ALLOWED_ROLES:
+        raise ValueError("Role must be user or assistant")
+    if not isinstance(content, str):
+        raise ValueError("Message content must be text")
+    return {"role": role, "content": content}
+
+def load_conversation(filename: str) -> list[dict[str, str]]:
+    """Read a JSON conversation, validating all turns before returning."""
+    try:
+        with open(filename, encoding="utf-8") as handle:
+            raw = json.load(handle)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"Unable to load conversation: {exc}") from exc
+    if not isinstance(raw, list):
+        raise ValueError("Conversation must be a JSON list")
+    turns = []
+    for index, item in enumerate(raw):
+        if not isinstance(item, dict):
+            raise ValueError(f"Invalid turn {index}: expected object")
+        try:
+            turns.append(validate_turn(item.get("role"), item.get("content")))
+        except ValueError as exc:
+            raise ValueError(f"Invalid turn {index}: {exc}") from exc
+    return turns
+
+
 class ConversationLogger:
     """Records each turn so a whole session can be saved to JSON."""
 
@@ -39,7 +71,7 @@ class ConversationLogger:
         self.turns: list[dict[str, str]] = []
 
     def log(self, role: str, content: str) -> None:
-        self.turns.append({"role": role, "content": content})
+        self.turns.append(validate_turn(role, content))
 
     def export(self, filename: str) -> None:
         export_to_json(self.turns, filename)
@@ -54,8 +86,9 @@ class ChatBot:
 
     def add_turn(self, role: str, content: str) -> None:
         """Append one message to the conversation memory."""
-        self.history.append({"role": role, "content": content})
+        turn = validate_turn(role, content)
         self.logger.log(role, content)
+        self.history.append(turn)
 
     def reply(self, user_message: str) -> str:
         """Add the user's message, ask the model, remember and return the answer."""
@@ -87,6 +120,16 @@ class ChatBot:
             f"like [source: file.md]: {question}"
         )
         return self.reply(prompt)
+
+    def save(self, filename: str) -> None:
+        """Export the full conversation log as JSON."""
+        self.logger.export(filename)
+
+    def resume(self, filename: str) -> None:
+        """Restore a validated session, preserving the configured system prompt."""
+        turns = load_conversation(filename)
+        self.history = [self.history[0]] + [item.copy() for item in turns]
+        self.logger.turns = [item.copy() for item in turns]
 
     def reset(self) -> None:
         """Forget everything except the system prompt."""
