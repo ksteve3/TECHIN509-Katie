@@ -1,0 +1,26 @@
+[
+  {
+    "role": "user",
+    "content": "The prototype enclosure is cardboard."
+  },
+  {
+    "role": "assistant",
+    "content": "I will remember the cardboard enclosure."
+  },
+  {
+    "role": "user",
+    "content": "The project needs a 48V battery."
+  },
+  {
+    "role": "assistant",
+    "content": "I noted the battery requirement."
+  },
+  {
+    "role": "user",
+    "content": "The demo uses a paper model."
+  },
+  {
+    "role": "assistant",
+    "content": "The paper model is for the demo."
+  }
+]
