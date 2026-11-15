@@ -6,6 +6,8 @@ coverage for the edge cases agreed in the issue's repeat-back comment.
 
 import json
 
+import pytest
+
 from ribot.conversation_search import search_saved_turns
 
 
@@ -15,12 +17,23 @@ def write_turns(tmp_path, turns):
     return path
 
 
-def test_empty_query_returns_all_turns_in_order(tmp_path):
+@pytest.mark.parametrize("query", ["", " ", "   \t\n"])
+def test_empty_or_whitespace_query_returns_empty_list(tmp_path, query):
     turns = [
         {"role": "user", "content": "first"},
         {"role": "assistant", "content": "second"},
     ]
-    assert search_saved_turns("", write_turns(tmp_path, turns)) == turns
+    assert search_saved_turns(query, write_turns(tmp_path, turns)) == []
+
+
+def test_query_with_surrounding_spaces_still_matches_as_substring(tmp_path):
+    turns = [
+        {"role": "user", "content": "a 48V battery pack"},
+        {"role": "user", "content": "battery"},
+    ]
+    assert search_saved_turns(" battery ", write_turns(tmp_path, turns)) == [
+        {"role": "user", "content": "a 48V battery pack"},
+    ]
 
 
 def test_original_dicts_preserved_including_extra_keys(tmp_path):

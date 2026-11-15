@@ -14,10 +14,14 @@ def search_saved_turns(query: str, json_path) -> list[dict[str, str]]:
     """Return every saved turn whose content contains `query` (case-insensitive).
 
     Matching turns come back as the original dicts, in their saved order.
-    Returns [] when nothing matches. An empty query matches every turn,
-    because an empty string is a substring of every string.
-    Turns that are not dicts, or whose content is not text, are skipped.
+    Returns [] when nothing matches, and [] for an empty or whitespace-only
+    query (otherwise "" would match every turn, since it is a substring of
+    every string). Turns that are not dicts, or whose content is not text,
+    are skipped.
     """
+    if not query.strip():
+        return []
+
     with open(json_path, encoding="utf-8") as handle:
         turns = json.load(handle)
 
