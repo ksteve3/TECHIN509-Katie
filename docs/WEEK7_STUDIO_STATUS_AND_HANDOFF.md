@@ -2,7 +2,7 @@
 
 **Submission repository:** https://github.com/ksteve3/TECHIN509-Katie  
 **Updated:** November 15, 2026  
-**Owner delivery:** Mike's feature merged; post-merge `main` test run remains to be recorded  
+**Owner delivery:** Mike's feature merged; post-merge `main` verification complete (113 passed, 0 failed, 0 errors)  
 **Developer delivery:** Katie's ReceiptBot implementation submitted as PR #5; Mike's review and merge pending
 
 ## Katie's project-owner work
@@ -17,7 +17,7 @@
 - [x] Formal GitHub approval review posted on PR #4.
 - [x] PR #4 merged into `main`, merge commit `a4da6df057eb92c5d44a6774f9858d64a1d3141a`; Issue #2 closed automatically.
 - [x] Owner-authored contingency [draft PR #3](https://github.com/ksteve3/TECHIN509-Katie/pull/3) closed without merging or deleting its branch. It was not counted as partner work.
-- [ ] Run `python -m pytest` on updated **local `main` after merging** and record the actual results.
+- [x] Post-merge validation on local `main` at `5209bafb189e146e1012982ec5fbb72966828cf3`: `python -m pytest` → **113 passed, 0 failed, 0 errors** (exit code 0). Local `main` matched `origin/main`; untracked notebooks and `worklog/katie.md` were preserved and hash-checked.
 - [ ] Confirm instructor has access if explicit access is required.
 
 ## Katie's developer work for Mike's ReceiptBot
