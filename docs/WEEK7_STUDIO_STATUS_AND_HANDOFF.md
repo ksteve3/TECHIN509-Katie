@@ -1,63 +1,67 @@
-# Week 7 Studio — Owner Status and Partner Handoff
+# Week 7 Studio — Owner Delivery and Developer Handoff
 
-**Repository submitted to Canvas:** https://github.com/ksteve3/TECHIN509-Katie  
-**As of:** November 15, 2026  
-**Status:** Owner preparation complete; partner collaboration **not yet verified or complete**.
+**Submission repository:** https://github.com/ksteve3/TECHIN509-Katie  
+**Updated:** November 15, 2026  
+**Owner delivery:** Mike's feature merged; post-merge `main` test run remains to be recorded  
+**Developer delivery:** Katie's work on Mike's ReceiptBot is pending
 
-This file deliberately documents unfinished steps as placeholders. It is **not** evidence that a partner implemented, reviewed, approved, or merged code.
+## Katie's project-owner work
 
-## Completed project-owner preparation (Katie)
+- [x] Defined a small feature: search saved conversation messages without deleting memory.
+- [x] Committed synthetic fixture [conversation_search_sample.json](../tests/data/conversation_search_sample.json) before implementation.
+- [x] Committed three exact-result acceptance tests [test_conversation_search.py](../tests/test_conversation_search.py) before implementation.
+- [x] Opened [Issue #2](https://github.com/ksteve3/TECHIN509-Katie/issues/2) with behavior, function signature, tests, and scope.
+- [x] Partner **LBXMike** restated the contract; Katie clarified blank queries and malformed turn handling in the issue comments.
+- [x] Mike contributed independently via his fork: [PR #4](https://github.com/ksteve3/TECHIN509-Katie/pull/4), implementing `ribot/conversation_search.py` and nine additional edge-case tests.
+- [x] Owner review evidence: DT Chat tested exact head `bd8c4087fcfce8658547401a5125c68b70232bb5` in a separate checkout. Acceptance: **3 passed**; edge-case: **9 passed**; full suite: **113 passed**. Extra input `"48v batt"` returned exactly one matching user turn about the 48V battery. The sample file was unchanged and `git diff --check` passed.
+- [x] Formal GitHub approval review posted on PR #4.
+- [x] PR #4 merged into `main`, merge commit `a4da6df057eb92c5d44a6774f9858d64a1d3141a`; Issue #2 closed automatically.
+- [x] Owner-authored contingency [draft PR #3](https://github.com/ksteve3/TECHIN509-Katie/pull/3) closed without merging or deleting its branch. It was not counted as partner work.
+- [ ] Run `python -m pytest` on updated **local `main` after merging** and record the actual results.
+- [ ] Confirm instructor has access if explicit access is required.
 
-- [x] Chose one small feature: search saved conversation messages without deleting memory.
-- [x] Committed synthetic data to `main`: [conversation_search_sample.json](../tests/data/conversation_search_sample.json).
-- [x] Committed 3 exact-result acceptance tests to `main` before any implementation: [test_conversation_search.py](../tests/test_conversation_search.py).
-- [x] Opened [Issue #2](https://github.com/ksteve3/TECHIN509-Katie/issues/2) with signature, inputs, outputs, test command, and out-of-scope work.
-- [x] Previously verified baseline on GitHub `main`: **101 passed** excluding the intentionally failing Week 7 test module; 3 Week 7 tests failed at missing import as expected. These are results of an earlier independent checkout, not a new run.
-- [x] Local `main` was reported fast-forwarded to the tests-first commit `6e96b00` with existing untracked files preserved.
+## Katie's developer work for Mike's ReceiptBot
 
-## Pending: partner-delivered feature in Katie's repository
+**Partner repository:** https://github.com/LBXMike/Techin509  
+**Owner's issue:** [Issue #4 — Add item price lookup to ReceiptBot](https://github.com/LBXMike/Techin509/issues/4)
 
-- [ ] **Partner:** [name / GitHub username not yet confirmed for this feature].
-- [ ] **Access workflow:** [collaborator write permission OR fork-and-PR confirmed].
-- [ ] **Issue walkthrough:** partner restates the function signature and edge-case behavior in Issue #2 before implementation.
-- [ ] **Partner feature branch:** [branch URL to be added after partner creates it].
-- [ ] **Partner pull request:** [PR URL to be added after partner opens it].
-- [ ] **Partner PR description:** `Closes #2`, one-sentence change, verification commands and actual results.
-- [ ] **Owner review:** Katie reruns the acceptance suite and full suite on the partner's branch.
-- [ ] **Extra owner review input:** `search_saved_turns("48v batt", SAMPLE)` should return only `{"role": "user", "content": "The project needs a 48V battery."}`. Verify behavior with the actual implementation, not just by reading the code.
-- [ ] **Review comments:** [real observed test commands / results / extra input / reasoning].
-- [ ] **Outcome:** [approved / changes requested / merged / issue closed / branch preserved].
+**Required implementation:** `find_item(query: str, receipts: list[dict]) -> list[dict]` in `project2/item_lookup.py`. Return results for matching item names (case-insensitive substring search) in receipt and item order. Each result must have the exact keys `receipt`, `store`, `date`, `item`, `price`. Blank or unknown queries return `[]`. Do not mutate input receipts or change existing code/tests; no chat-loop integration.
 
-### Read-only check commands (from repo root)
+Mike's test-first setup:
+- [project2/tests/test_p2_item_lookup.py](https://github.com/LBXMike/Techin509/blob/main/project2/tests/test_p2_item_lookup.py) — 5 acceptance tests
+- [project2/tests/data/item_lookup_sample.json](https://github.com/LBXMike/Techin509/blob/main/project2/tests/data/item_lookup_sample.json) — synthetic receipt data
+- Baseline reported by issue: **75 passed, 5 expected missing-import failures** for `project2/tests`. Needs independent local confirmation.
+
+**Still needed:**
+- [ ] Katie repeats back the feature contract in Mike's Issue #4 before implementing.
+- [ ] Confirm push access or use a fork-and-PR workflow.
+- [ ] Create feature branch from Mike's `main`, preserve any other work.
+- [ ] Run `python -m pytest project2/tests/test_p2_item_lookup.py -v` before editing.
+- [ ] Add only `project2/item_lookup.py` with the smallest working implementation.
+- [ ] Run `python -m pytest project2/tests/test_p2_item_lookup.py -v` and `python -m pytest project2/tests` after implementation.
+- [ ] Commit, push, and open a PR into Mike's `main` with `Closes #4`, actual test results, and an explicit review request.
+- [ ] Respond to Mike's real review feedback, revise if requested, and retain the branch after merge.
+
+## Validation commands
+
+For Katie's repository (now that PR #4 is merged):
 
 ```powershell
 git status
-git branch --show-current
 git fetch origin
-git rev-parse HEAD origin/main
-python -m pytest tests/test_conversation_search.py -v
-python -m pytest --ignore=tests/test_conversation_search.py -v
+git pull --ff-only origin main
+python -m pytest
 ```
 
-*Before implementation*, the focused tests should fail at the missing `ribot.conversation_search` import. *After partner implementation*, rerun `python -m pytest` and confirm all tests pass on the appropriate branch. **Do not mark a check as done until actually verified.**
+For Mike's repository, from the repository root:
 
-## Pending: Katie's developer contribution to partner's repository
+```powershell
+python -m pytest project2/tests/test_p2_item_lookup.py -v
+python -m pytest project2/tests
+```
 
-- [ ] **Partner repository:** [URL].
-- [ ] **Partner's GitHub issue:** [URL and issue number].
-- [ ] **Agreed feature / function contract:** [from the partner's issue].
-- [ ] **Acceptance tests and sample data present in partner default branch before Katie starts:** [verified commit].
-- [ ] **Katie's feature branch:** [URL].
-- [ ] **Katie's PR:** [URL; must include `Closes #n`, change summary, actual test results].
-- [ ] **Partner review:** [real review feedback and any revisions].
-- [ ] **Merge:** [merged / issue closed / branch preserved].
+## Source and integrity notes
 
-## Separate contingency — NOT partner work
+The Week 7 studio instructions explicitly require collaboration: each person owns one feature, develops one feature for the partner, provides real review evidence, and keeps branches undeleted. This document reports completed and pending actions accurately; do not mark pending steps as done without performing them.
 
-[Draft PR #3](https://github.com/ksteve3/TECHIN509-Katie/pull/3) is an **independent owner-authored fallback** on `week7-solo-fallback-conversation-search`. It does **not** satisfy the partner contribution or review requirements; do not represent it as Mike's work. The draft PR is not merged into `main`.
-
-## Professor's requirements and limitations
-
-The Week 7 studio instructions require **one actual feature delivered in the owner's repo and one PR contributed to the partner's repo**, real code review, merging, and passing tests on the default branch after merge. This document is a truthful readiness checklist, not a substitute for those actions.
-
-Course source: https://github.com/GIX-Luyao/H-TECHIN509-2026/tree/main/week-7/studio
+Instructor instructions: https://github.com/GIX-Luyao/H-TECHIN509-2026/tree/main/week-7/studio
