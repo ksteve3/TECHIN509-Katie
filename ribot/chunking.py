@@ -16,6 +16,8 @@ def chunk_text(text: str, size: int = 300, overlap: int = 50) -> list[str]:
     """
     if size <= 0:
         raise ValueError("size must be positive")
+    if overlap < 0:
+        raise ValueError("overlap must be nonnegative")
     if overlap >= size:
         raise ValueError("overlap must be smaller than size")
 

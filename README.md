@@ -118,6 +118,28 @@ profile, input loop, history updates and context, `/show`, `/exit`, blank input,
 unknown commands. Passing these tests verifies the conversation mechanics and profile
 configuration, not a real model's adherence to the profile.
 
+## Assignment 3 — Offline document retrieval
+
+I indexed seven local reference summaries and evaluated retrieval on ten
+supported questions and two unsupported questions. Each structured hit includes
+the source filename, chunk ID, passage text, and similarity score. The selected
+600-character windows with 100-character overlap reached 10/10 Evidence@3.
+Both unsupported questions returned irrelevant hits, so rejecting weak matches
+remains future work. [Implementation and evaluation report](docs/ASSIGNMENT_3_RETRIEVAL.md)
+
+Run from the project directory in PowerShell with the existing virtual environment.
+
+```powershell
+$env:PYTHON_DOTENV_DISABLED = '1'
+$env:PYTEST_DISABLE_PLUGIN_AUTOLOAD = '1'
+$env:OPENAI_API_KEY = ' '
+$env:RIBOT_LLM = 'fake'
+$env:RIBOT_EMBED = 'fake'
+.\.venv\Scripts\python.exe -B -m ribot.assignment3 calibrate
+.\.venv\Scripts\python.exe -B -m ribot.assignment3 golden --min-score 0.09
+.\.venv\Scripts\python.exe -B -m pytest -q -p no:cacheprovider
+```
+
 ## How the files map to the weeks
 
 | Week | You learn | File you build / use | Fallback if stuck |

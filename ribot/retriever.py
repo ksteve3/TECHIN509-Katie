@@ -12,6 +12,7 @@ from typing import Callable
 
 from .embeddings import get_embedder
 from .rerank import rerank
+from .vectorstore import RetrievalHit
 
 
 class Retriever:
@@ -27,6 +28,17 @@ class Retriever:
         """Return up to k (chunk, score) pairs, best first."""
         query_vec = self._embed(query)
         return self._store.query(query_vec, n_results=k)
+
+    def search_hits(
+        self, query: str, k: int = 3, *, min_score: float = 0.0
+    ) -> list[RetrievalHit]:
+        """Return ranked hits with provenance and scores strictly above min_score."""
+        if k <= 0:
+            raise ValueError("k must be positive")
+        if not query.strip() or not self._store.count():
+            return []
+        hits = self._store.query_hits(self._embed(query), n_results=k)
+        return [hit for hit in hits if hit.score > min_score]
 
     def search_hybrid(
         self,

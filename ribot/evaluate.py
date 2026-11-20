@@ -20,11 +20,48 @@ import json
 from pathlib import Path
 from typing import Callable, Iterable, Sequence
 
+from .vectorstore import RetrievalHit
+
 GOLDEN_PATH = Path(__file__).resolve().parent.parent / "data" / "golden_set.json"
 
 # A search variant: (question, history) -> ranked [(chunk, score), ...]
 SearchFn = Callable[[str, Sequence], list[tuple[str, float]]]
 SourceFn = Callable[[str], str]
+
+
+def evaluate_hits(
+    golden: Iterable[dict],
+    search_hits: Callable[[str], list[RetrievalHit]],
+) -> dict:
+    """Score provenance and text on the same hit; report unsupported queries separately."""
+    supported = []
+    unsupported = []
+    for item in golden:
+        hits = search_hits(item["question"])[:3]
+        source = item["expected_source"]
+        snippet = item["expected_snippet"]
+        row = {"id": item["id"], "hits": hits}
+        if source is None:
+            unsupported.append({**row, "no_result": not hits})
+            continue
+        if not snippet:
+            raise ValueError(f"Missing expected evidence for {item['id']}")
+        supported.append({
+            **row,
+            "hit_at_1": bool(hits) and hits[0].source_filename == source,
+            "hit_at_3": any(hit.source_filename == source for hit in hits),
+            "evidence_at_3": any(
+                hit.source_filename == source and snippet in hit.text for hit in hits
+            ),
+        })
+
+    return {
+        "supported": supported,
+        "unsupported": unsupported,
+        "hit_at_1": sum(row["hit_at_1"] for row in supported),
+        "hit_at_3": sum(row["hit_at_3"] for row in supported),
+        "evidence_at_3": sum(row["evidence_at_3"] for row in supported),
+    }
 
 
 def load_golden_set(corpus: str | None = None, path: Path = GOLDEN_PATH) -> list[dict]:

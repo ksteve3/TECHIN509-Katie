@@ -1,0 +1,77 @@
+{
+  "description": "Assignment 3 preparedness and practical reference evaluation",
+  "questions": [
+    {
+      "id": "water-altitude",
+      "question": "Does elevation change how long I should boil clear water during an emergency?",
+      "expected_source": "cdc_emergency_water.md",
+      "expected_snippet": "Boil clear water for one minute at a rolling boil, or three minutes above 6,500 feet."
+    },
+    {
+      "id": "water-fuel",
+      "question": "Can heating or disinfecting a fuel-tainted water supply make it drinkable?",
+      "expected_source": "cdc_emergency_water.md",
+      "expected_snippet": "Boiling and disinfection cannot make water contaminated with fuel, toxic chemicals, or radioactive material safe."
+    },
+    {
+      "id": "generator-clearance",
+      "question": "How far from openings should I operate a portable generator?",
+      "expected_source": "cdc_generator_safety.md",
+      "expected_snippet": "Run portable generators outdoors more than 20 feet from windows, doors, and vents."
+    },
+    {
+      "id": "generator-monitor",
+      "question": "What kind of carbon monoxide alarm works during a blackout while using a generator?",
+      "expected_source": "cdc_generator_safety.md",
+      "expected_snippet": "use a battery-powered carbon monoxide detector or one with battery backup"
+    },
+    {
+      "id": "food-fridge",
+      "question": "With the refrigerator unopened, how long will cold food keep during a power cut?",
+      "expected_source": "foodsafety_power_outage.md",
+      "expected_snippet": "With the door closed, a refrigerator keeps food cold for about four hours."
+    },
+    {
+      "id": "food-freezer",
+      "question": "How does a full freezer compare with a partly filled one during a power outage?",
+      "expected_source": "foodsafety_power_outage.md",
+      "expected_snippet": "With the door closed, a full freezer holds its temperature for about 48 hours and a half-full freezer for about 24 hours."
+    },
+    {
+      "id": "lighting-spares",
+      "question": "What spare supplies should I pack with the flashlight in my emergency kit?",
+      "expected_source": "fema_emergency_lighting.md",
+      "expected_snippet": "Pack a flashlight and extra batteries in the emergency supply kit."
+    },
+    {
+      "id": "wound-cover",
+      "question": "What kind of dressing should cover a clean open wound?",
+      "expected_source": "cdc_basic_first_aid.md",
+      "expected_snippet": "Cover a clean open wound with a waterproof bandage"
+    },
+    {
+      "id": "solar-conversion",
+      "question": "What electrical conversion lets household appliances use power from photovoltaic modules?",
+      "expected_source": "doe_solar_pv.md",
+      "expected_snippet": "Solar modules produce direct-current (DC) electricity. A system uses power conversion equipment to turn DC into alternating current (AC) used by household appliances."
+    },
+    {
+      "id": "paper-screen",
+      "question": "When making a paper sheet by hand, what happens as the mold is lifted out of the pulp?",
+      "expected_source": "gatech_hand_papermaking.md",
+      "expected_snippet": "The screen held the fibers while water drained, forming a wet sheet."
+    },
+    {
+      "id": "weather",
+      "question": "What is tomorrow's weather forecast?",
+      "expected_source": null,
+      "expected_snippet": null
+    },
+    {
+      "id": "generator-startup",
+      "question": "What are the exact startup steps for my portable generator model?",
+      "expected_source": null,
+      "expected_snippet": null
+    }
+  ]
+}
