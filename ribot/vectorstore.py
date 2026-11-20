@@ -10,8 +10,21 @@ Two backends, one interface:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from operator import itemgetter
 
 from .similarity import cosine_similarity
+
+
+@dataclass(frozen=True)
+class RetrievalHit:
+    source_filename: str
+    chunk_id: str
+    text: str
+    score: float
+
+
+def _hit(chunk_id: str, text: str, score: float) -> RetrievalHit:
+    return RetrievalHit(chunk_id.rsplit(":", 1)[0], chunk_id, text, score)
 
 
 @dataclass
@@ -31,11 +44,27 @@ class InMemoryStore:
         return len(self.ids)
 
     def query(self, embedding: list[float], n_results: int = 3) -> list[tuple[str, float]]:
-        scored = [
-            (doc, cosine_similarity(embedding, vec))
-            for doc, vec in zip(self.documents, self.embeddings)
+        return [
+            (self.documents[index], score)
+            for index, score in self._rank(embedding, n_results)
         ]
-        scored.sort(key=lambda pair: pair[1], reverse=True)
+
+    def query_hits(
+        self, embedding: list[float], n_results: int = 3
+    ) -> list[RetrievalHit]:
+        return [
+            _hit(self.ids[index], self.documents[index], score)
+            for index, score in self._rank(embedding, n_results)
+        ]
+
+    def _rank(
+        self, embedding: list[float], n_results: int
+    ) -> list[tuple[int, float]]:
+        scored = [
+            (index, cosine_similarity(embedding, vec))
+            for index, (_, vec) in enumerate(zip(self.documents, self.embeddings))
+        ]
+        scored.sort(key=itemgetter(1), reverse=True)
         return scored[:n_results]
 
 
@@ -55,11 +84,17 @@ class ChromaStore:
         return self._collection.count()
 
     def query(self, embedding: list[float], n_results: int = 3) -> list[tuple[str, float]]:
+        return [(hit.text, hit.score) for hit in self.query_hits(embedding, n_results)]
+
+    def query_hits(
+        self, embedding: list[float], n_results: int = 3
+    ) -> list[RetrievalHit]:
         res = self._collection.query(query_embeddings=[embedding], n_results=n_results)
+        ids = res.get("ids", [[]])[0]
         docs = res.get("documents", [[]])[0]
         dists = res.get("distances", [[]])[0] or [0.0] * len(docs)
         # chroma returns distance (lower = closer); convert to a similarity-ish score.
-        return [(doc, 1.0 - dist) for doc, dist in zip(docs, dists)]
+        return [_hit(cid, doc, 1.0 - dist) for cid, doc, dist in zip(ids, docs, dists)]
 
 
 def get_store(persist: bool = False, path: str = ".chroma", name: str = "docs"):

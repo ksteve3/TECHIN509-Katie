@@ -7,6 +7,7 @@ Run it:  python -m ribot.build_index
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Callable
 
 from .chunking import chunk_text
 from .embeddings import get_embedder
@@ -34,6 +35,8 @@ def build_index(
     size: int = 300,
     overlap: int = 50,
     quiet: bool = False,
+    *,
+    embed_fn: Callable[[str], list[float]] | None = None,
 ):
     """Build and return a Retriever over the documents in `folder`.
 
@@ -41,7 +44,8 @@ def build_index(
     them and measure what changes. The defaults are exactly what Weeks 6-8 have always
     used, so existing calls behave identically.
     """
-    embed = get_embedder()
+    chunk_text("", size=size, overlap=overlap)
+    embed = embed_fn if embed_fn is not None else get_embedder()
     store = get_store(persist=persist)
 
     ids, documents, embeddings = [], [], []
